@@ -15,11 +15,11 @@ function SampleComponent() {
   const [state, dispatch] = useReducer(
     (state, initialValue) => {
       switch (initialValue.type) {
-        case "A":
-          state = { ...state, counterA: state.counterA + 1 };
+        case "+":
+          state = { ...state, counter: state.counter + 1 };
           break;
-        case "B":
-          state = { ...state, counterB: state.counterB + 1 };
+        case "-":
+          state = { ...state, counter: state.counter - 1 };
           break;
 
         default:
@@ -27,17 +27,15 @@ function SampleComponent() {
       }
       return state;
     },
-    { counterA: 0, counterB: 0 }
+    { counter: 0 }
   );
 
   return (
     <div>
       <h2>Sample Component</h2>
-      <h3>
-        A: {state.counterA} B: {state.counterB}
-      </h3>
-      <button onClick={() => dispatch({ type: "A" })}>A</button>
-      <button onClick={() => dispatch({ type: "B" })}>B</button>
+      <h3>Counter: {state.counter}</h3>
+      <button onClick={() => dispatch({ type: "+" })}> + </button>
+      <button onClick={() => dispatch({ type: "-" })}> - </button>
     </div>
   );
 }
