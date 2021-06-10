@@ -31,7 +31,58 @@ p {
   margin: 0.5rem 0rem;
 }
 
+div {
+  padding: 0.25rem;
+  margin: 0.25rem;
+}
+
 button {
   padding: 0.1rem;
   margin: 0.25rem;
+}
+
+.layout {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.layout > div {
+  border: 1px solid red;
+}
+
+.products-list {
+  width: 32%;
+  border: 1px solid black;
+}
+
+.product-item {
+  padding: 0.25rem;
+  margin: 0.25rem;
+  border: 1px solid black;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.wishlist {
+  width: 32%;
+  border: 1px solid black;
+}
+
+.wishlist-item {
+  padding: 0.25rem;
+  margin: 0.25rem;
+  border: 1px solid black;
+}
+
+.cart {
+  width: 32%;
+  border: 1px solid black;
+}
+
+.cart-item {
+  padding: 0.25rem;
+  margin: 0.25rem;
+  border: 1px solid black;
 }
