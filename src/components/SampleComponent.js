@@ -29,59 +29,78 @@ const productList = [
 ];
 
 function SampleComponent() {
-  useEffect(() => {
-    console.log("useEffect run on render");
-    return () => {
-      console.log("useEffect cleanup");
-    };
-  }, []);
+  // useEffect(() => {
+  //   console.log("useEffect run on render");
+  //   return () => {
+  //     console.log("useEffect cleanup");
+  //   };
+  // }, []);
 
   // const [state, setStateFunc] = useState(0);
   // const [state, setStateFunc] = useReducer((accumulator, value) => {}, {});
   // const [state, dispatch] = useReducer((state, value) => {}, {});
 
+  const getProductFromID = (id) => {
+    const productIndex = productList.findIndex((product) => product.id === id);
+    const product = productList[productIndex];
+
+    return product;
+  };
+
   const [cartTracker, dispatch] = useReducer(
     (prevCartTracker, value) => {
-      // console.log(value);
-
+      // check if item is already in cartTracker
       const { type, id } = value;
-      const { cart, wishlist } = prevCartTracker;
-      const productIndex = productList.findIndex(
-        (product) => product.id === id
-      );
-      const product = productList[productIndex];
-
-      console.log({ product });
+      let newCartTracker = { ...prevCartTracker };
+      const { cart, wishlist } = newCartTracker;
+      const product = getProductFromID(id);
 
       switch (type) {
         case "CART-ADD":
-          let newUnits = -1;
-          let prevUnits = -1;
+          let newCart = [...cart];
 
-          // check if
-          if (cart[id] === undefined) {
-            newUnits = 1;
-          } else {
-            prevUnits = cart[id].units;
-          }
+          // check if item is already in cart
+          let indexInCart = cart.findIndex((cartItem) => cartItem.id === id);
+          newCart[indexInCart].productPosition = productList.findIndex(
+            (product) => product.id === id
+          );
 
-          if (prevUnits >= 1) newUnits = prevUnits + 1;
-          else newUnits = 1;
+          let indexInProductList = productList.findIndex(
+            (product) => product.id === id
+          );
 
-          prevCartTracker = {
-            ...prevCartTracker,
-            cart: { [id]: { units: newUnits, cost: newUnits * product.price } },
-          };
+          newCart[indexInCart].units = newCart[indexInCart].units + 1;
+          newCart[indexInCart].cost =
+            productList[indexInProductList].price * newCart[indexInCart].units;
+
           break;
 
         default:
+          console.log(`No Case`);
           break;
       }
 
-      console.log(prevCartTracker);
-      return prevCartTracker;
+      console.log("prevCartTracker", prevCartTracker);
+      console.log("newCartTracker", newCartTracker);
+      return newCartTracker;
     },
-    { cart: {}, wishlist: {} }
+    {
+      cart: [
+        {
+          id: "prod1",
+          productPosition: 0,
+          units: 0,
+          cost: 0,
+        },
+        {
+          id: "prod2",
+          productPosition: 1,
+          units: 0,
+          cost: 0,
+        },
+      ],
+      wishlist: [],
+    }
   );
 
   return (
@@ -92,14 +111,14 @@ function SampleComponent() {
           <h3>Products</h3>
           {productList.map((product) => {
             return (
-              <div className="product-item">
+              <div className="product-item" key={product.id}>
                 <div>{product.name}</div>
                 <div>{product.price}</div>
                 <div>
                   <button
-                    onClick={() => {
-                      dispatch({ type: "CART-ADD", id: product.id });
-                    }}
+                    onClick={() =>
+                      dispatch({ type: "CART-ADD", id: product.id })
+                    }
                   >
                     +
                   </button>
@@ -108,11 +127,25 @@ function SampleComponent() {
             );
           })}
         </div>
-        <div className="wishlist">
-          <h3>Wishlist</h3>
-        </div>
         <div className="cart">
           <h3>Cart</h3>
+          {cartTracker.cart.map((item) => {
+            let position = item.productPosition;
+            return (
+              <div key={item.id}>
+                {productList[position].name} X {item.units} = {item.cost}
+              </div>
+            );
+          })}
+          <h3>
+            TOTAL:{" "}
+            {cartTracker.cart.reduce((acc, val) => {
+              return acc + val.cost;
+            }, 0)}
+          </h3>
+        </div>
+        <div className="wishlist">
+          <h3>Wishlist</h3>
         </div>
       </div>
     </div>
