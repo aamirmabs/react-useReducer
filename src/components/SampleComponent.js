@@ -1,4 +1,6 @@
 import React, { useEffect, useReducer } from "react";
+import wishlistTrue from "../images/icons/wishlist-true.png";
+import wishlistFalse from "../images/icons/wishlist-false.png";
 
 const productList = [
   {
@@ -47,61 +49,86 @@ function SampleComponent() {
     return product;
   };
 
-  const [cartTracker, dispatch] = useReducer(
-    (prevCartTracker, value) => {
-      // check if item is already in cartTracker
-      const { type, id } = value;
-      let newCartTracker = { ...prevCartTracker };
-      const { cart, wishlist } = newCartTracker;
-      const product = getProductFromID(id);
+  const initialCart = {
+    cart: [
+      {
+        id: "prod1",
+        productPosition: 0,
+        units: 0,
+        cost: 0,
+      },
+      {
+        id: "prod2",
+        productPosition: 1,
+        units: 0,
+        cost: 0,
+      },
+      {
+        id: "prod3",
+        productPosition: 2,
+        units: 0,
+        cost: 0,
+      },
+      {
+        id: "prod4",
+        productPosition: 3,
+        units: 0,
+        cost: 0,
+      },
+      {
+        id: "prod5",
+        productPosition: 4,
+        units: 0,
+        cost: 0,
+      },
+    ],
+    wishlist: ["prod1", "prod2"],
+  };
 
-      switch (type) {
-        case "CART-ADD":
-          let newCart = [...cart];
+  const [cartTracker, dispatch] = useReducer((prevCart, value) => {
+    let newCart = { ...prevCart };
+    // console.log("newCart before: ", newCart.cart);
 
-          // check if item is already in cart
-          let indexInCart = cart.findIndex((cartItem) => cartItem.id === id);
-          newCart[indexInCart].productPosition = productList.findIndex(
-            (product) => product.id === id
-          );
+    // check if product exists in the cart
+    const cartIndex = prevCart.cart.findIndex((item) => item.id === value.id);
 
-          let indexInProductList = productList.findIndex(
-            (product) => product.id === id
-          );
+    switch (value.type) {
+      case "CART-INCREASE":
+        // console.log("CART-INCREASE" + Math.random().toFixed(2));
 
-          newCart[indexInCart].units = newCart[indexInCart].units + 1;
-          newCart[indexInCart].cost =
-            productList[indexInProductList].price * newCart[indexInCart].units;
+        // console.log(cartIndex);
 
-          break;
+        // increase units of item if exists
+        let newUnits = prevCart.cart[cartIndex].units + 1;
+        newCart.cart[cartIndex].units = newUnits;
 
-        default:
-          console.log(`No Case`);
-          break;
-      }
+        // console.log("newCart after: ", newCart.cart);
+        return newCart;
 
-      console.log("prevCartTracker", prevCartTracker);
-      console.log("newCartTracker", newCartTracker);
-      return newCartTracker;
-    },
-    {
-      cart: [
-        {
-          id: "prod1",
-          productPosition: 0,
-          units: 0,
-          cost: 0,
-        },
-        {
-          id: "prod2",
-          productPosition: 1,
-          units: 0,
-          cost: 0,
-        },
-      ],
-      wishlist: [],
+      case "CART-REMOVE":
+        newCart.cart.splice(cartIndex, 1);
+        // console.log("After remove: ", newCart);
+        return newCart;
+
+      case "WISHLIST-TOGGLE":
+        const wishlistIndex = newCart.wishlist.findIndex(
+          (item) => item === value.id
+        );
+
+        if (wishlistIndex >= 0) {
+          console.log("Wishlist exists");
+          newCart.wishlist.splice(wishlistIndex, 1);
+        } else {
+          console.log("Wishlist NOT exists");
+          newCart.wishlist.push(value.id);
+        }
+        console.log(newCart.wishlist);
+        return newCart;
+      default:
+        console.log("default");
+        return newCart;
     }
-  );
+  }, initialCart);
 
   return (
     <div>
@@ -110,6 +137,9 @@ function SampleComponent() {
         <div className="products-list bordered">
           <h3>Products</h3>
           {productList.map((product) => {
+            const wishlistIcon = cartTracker.wishlist.includes(product.id)
+              ? "images/icons/wishlist-true.png"
+              : "images/icons/wishlist-false.png";
             return (
               <div className="product-item" key={product.id}>
                 <div>{product.name}</div>
@@ -117,11 +147,21 @@ function SampleComponent() {
                 <div>
                   <button
                     onClick={() =>
-                      dispatch({ type: "CART-ADD", id: product.id })
+                      dispatch({ type: "CART-INCREASE", id: product.id })
                     }
                   >
                     +
                   </button>
+                </div>
+                <div>
+                  <img
+                    onClick={() =>
+                      dispatch({ type: "WISHLIST-TOGGLE", id: product.id })
+                    }
+                    className="wishlist-icon"
+                    src={wishlistIcon}
+                    alt="wishlist"
+                  />
                 </div>
               </div>
             );
@@ -129,11 +169,19 @@ function SampleComponent() {
         </div>
         <div className="cart">
           <h3>Cart</h3>
-          {cartTracker.cart.map((item) => {
-            let position = item.productPosition;
+          {cartTracker.cart.map((product) => {
+            let position = product.productPosition;
+
             return (
-              <div key={item.id}>
-                {productList[position].name} X {item.units} = {item.cost}
+              <div key={product.id}>
+                {productList[position].name} X {product.units} = {product.cost}{" "}
+                <button
+                  onClick={() => {
+                    dispatch({ type: "CART-REMOVE", id: product.id });
+                  }}
+                >
+                  Remove
+                </button>
               </div>
             );
           })}
