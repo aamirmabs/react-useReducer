@@ -41,53 +41,45 @@ button {
   margin: 0.25rem;
 }
 
-img.wishlist-icon {
-  width: 2rem;
-  height: auto;
-}
-
-.layout {
+.card-container {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
 }
 
-.layout > div {
-  border: 1px solid red;
+.card {
+  box-shadow: 5px 5px 5px darkgray;
+  border: 2px solid black;
+  width: 300px;
+  margin: 0.75rem;
 }
 
-.products-list {
-  width: 32%;
-  border: 1px solid black;
+.product-name {
+  font-size: 1.75rem;
+  font-weight: 700;
 }
 
-.product-item {
-  padding: 0.25rem;
-  margin: 0.25rem;
-  border: 1px solid black;
+.product-price {
+  font-size: 1.5rem;
+}
+
+.product-status {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-content: center;
 }
 
-.wishlist {
-  width: 32%;
-  border: 1px solid black;
+.product-status button {
+  height: 2rem;
+  font-weight: 700;
+  font-size: 1.5rem;
 }
 
-.wishlist-item {
-  padding: 0.25rem;
-  margin: 0.25rem;
-  border: 1px solid black;
-}
-
-.cart {
-  width: 32%;
-  border: 1px solid black;
-}
-
-.cart-item {
-  padding: 0.25rem;
-  margin: 0.25rem;
-  border: 1px solid black;
+.cart-count {
+  color: red;
+  font-weight: 900;
+  font-size: 1.5rem;
 }
