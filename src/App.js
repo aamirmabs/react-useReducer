@@ -1,14 +1,15 @@
 import "./App.css";
 import SampleComponent from "./components/SampleComponent";
 import { useCart } from "./contexts/CartContext";
+import productList from "./data/productList";
 
 function App() {
-  const { cartState, setCartState } = useCart();
+  const { cartState, setCartState, state } = useCart();
 
   return (
     <div className="App">
       <h1>Clean React</h1>
-      {cartState.wishlist.map((item) => {
+      {state.wishlist.map((item) => {
         return <div key={item}>{item}</div>;
       })}
       <SampleComponent />
